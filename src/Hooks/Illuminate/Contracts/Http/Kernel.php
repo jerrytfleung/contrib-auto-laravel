@@ -114,6 +114,14 @@ class Kernel implements LaravelHook
                         /** @phan-suppress-next-line PhanAccessMethodInternal,PhanUndeclaredClassMethod */
                         $prop->inject($response, ResponsePropagationSetter::instance(), $scope->context());
                     }
+
+                    // Propagate response baggage to response, if ResponseBaggagePropagator is present
+                    if (class_exists('OpenTelemetry\Contrib\Propagation\ResponseBaggage\ResponseBaggagePropagator')) {
+                        /** @phan-suppress-next-line PhanUndeclaredClassMethod */
+                        $prop = new \OpenTelemetry\Contrib\Propagation\ResponseBaggage\ResponseBaggagePropagator();
+                        /** @phan-suppress-next-line PhanAccessMethodInternal,PhanUndeclaredClassMethod */
+                        $prop->inject($response, ResponsePropagationSetter::instance(), $scope->context());
+                    }
                 }
 
                 $this->endSpan($exception);
